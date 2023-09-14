@@ -15,9 +15,9 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public void addProduct(ProductDto productDto) {
+    public UUID addProduct(ProductDto productDto) {
         Product product = Product.from(productDto);
-        productRepository.save(product);
+        return productRepository.save(product).getId();
     }
 
     public Product getProductBy(UUID id) {
