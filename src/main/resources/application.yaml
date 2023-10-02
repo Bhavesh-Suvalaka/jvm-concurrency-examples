@@ -2,7 +2,7 @@ server:
   port: 9090
 
 spring:
-#  thread-executor: virtual
+  thread-executor: virtual
   datasource:
     hikari:
       connectionTimeout: 20000

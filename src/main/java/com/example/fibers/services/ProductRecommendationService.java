@@ -26,9 +26,10 @@ public class ProductRecommendationService {
     }
 
     public List<Product> recommendProducts(String customerId) {
-        List<Order> orders = orderService.fetchOrderHistory(customerId);
-        List<CustomerPreference> customerPreference = preferenceService.fetchCustomerPreferences(customerId);
+        System.out.println(Thread.currentThread());
         Optional<Customer> customer = customerService.fetchCustomer(customerId);
+        List<CustomerPreference> customerPreference = preferenceService.fetchCustomerPreferences(customerId);
+        List<Order> orders = orderService.fetchOrderHistory(customerId);
 
         return customer
                 .map(it -> prepareProductRecommendation(it, customerPreference, orders))
@@ -36,28 +37,21 @@ public class ProductRecommendationService {
 
     }
 
-    public CompletableFuture<List<Product>> recommendProductsAsync(String customerId) throws InterruptedException {
-        CompletableFuture<List<Order>> orders = getOrderAsync(customerId);
-        CompletableFuture<Optional<Customer>> customer = getCustomerAsync(customerId);
-        CompletableFuture<List<CustomerPreference>> customerPreference = getCustomerPreferenceAsync(customerId);
+    public CompletableFuture<List<Product>> recommendProductsAsync(String customerId) {
+        CompletableFuture<List<Order>> orders = orderService.fetchOrderHistoryAsync(customerId);
+        CompletableFuture<Optional<Customer>> customer = customerService.fetchCustomerAsync(customerId);
+        CompletableFuture<List<CustomerPreference>> customerPreference = preferenceService.fetchCustomerPreferencesAsync(customerId);
 
-        CompletableFuture<Void> all = CompletableFuture.allOf(orders, customerPreference, customer);
-
-        return all.thenApply(res -> customer.join()
-                .map(it -> prepareProductRecommendation(it, customerPreference.join(), orders.join()))
-                .orElse(Collections.emptyList()));
+        return CompletableFuture.allOf(orders, customerPreference, customer)
+                .thenApplyAsync(res ->
+                        toRecommendedProduct(customer.join(), customerPreference.join(), orders.join())
+                );
     }
 
-    private CompletableFuture<List<CustomerPreference>> getCustomerPreferenceAsync(String customerId) {
-        return CompletableFuture.supplyAsync(() -> preferenceService.fetchCustomerPreferences(customerId));
-    }
-
-    private CompletableFuture<List<Order>> getOrderAsync(String customerId) {
-        return CompletableFuture.supplyAsync(() -> orderService.fetchOrderHistory(customerId));
-    }
-
-    private CompletableFuture<Optional<Customer>> getCustomerAsync(String customerId) throws InterruptedException {
-        return CompletableFuture.supplyAsync(() -> customerService.fetchCustomer(customerId));
+    private List<Product> toRecommendedProduct(Optional<Customer> customer, List<CustomerPreference> customerPreference, List<Order> orders) {
+        return customer
+                .map(it -> prepareProductRecommendation(it, customerPreference, orders))
+                .orElse(Collections.emptyList());
     }
 
     private List<Product> prepareProductRecommendation(

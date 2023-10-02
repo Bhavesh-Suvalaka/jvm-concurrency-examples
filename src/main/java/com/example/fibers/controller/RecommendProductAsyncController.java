@@ -20,9 +20,7 @@ public class RecommendProductAsyncController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public CompletableFuture<List<Product>> recommendedProducts(@PathVariable("customerId") String customerId) throws InterruptedException {
-        CompletableFuture<List<Product>> listCompletableFuture = productRecommendationService.recommendProductsAsync(customerId);
-        System.out.println("3 :" +System.currentTimeMillis());
-        return listCompletableFuture;
+    public CompletableFuture<List<Product>> recommendedProducts(@PathVariable("customerId") String customerId) {
+        return productRecommendationService.recommendProductsAsync(customerId);
     }
 }
