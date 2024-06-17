@@ -1,4 +1,4 @@
-package com.example.fibers.models;
+package com.example.recommendation.models;
 
 import java.util.UUID;
 

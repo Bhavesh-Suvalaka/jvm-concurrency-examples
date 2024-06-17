@@ -1,6 +1,6 @@
-package com.example.fibers.repo;
+package com.example.recommendation.repo;
 
-import com.example.fibers.models.Product;
+import com.example.recommendation.models.Product;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

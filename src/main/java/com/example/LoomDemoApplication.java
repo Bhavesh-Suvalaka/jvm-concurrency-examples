@@ -1,12 +1,12 @@
-package com.example.fibers;
+package com.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FibersApplication {
+public class LoomDemoApplication {
     public static void main(String[] args) {
         SpringApplication.run(
-                FibersApplication.class, args);
+                LoomDemoApplication.class, args);
     }
 }

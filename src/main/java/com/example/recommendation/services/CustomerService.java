@@ -1,6 +1,6 @@
-package com.example.fibers.services;
+package com.example.recommendation.services;
 
-import com.example.fibers.models.Customer;
+import com.example.recommendation.models.Customer;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

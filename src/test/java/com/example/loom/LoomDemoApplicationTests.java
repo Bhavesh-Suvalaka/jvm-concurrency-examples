@@ -1,10 +1,10 @@
-package com.example.fibers;
+package com.example.loom;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FibersApplicationTests {
+class LoomDemoApplicationTests {
 
 	@Test
 	void contextLoads() {

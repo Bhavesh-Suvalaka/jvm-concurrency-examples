@@ -1,4 +1,4 @@
-package com.example.fibers.dto;
+package com.example.recommendation.dto;
 
 import java.math.BigDecimal;
 

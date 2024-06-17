@@ -15,3 +15,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: ${POSTGRES_AUTO_DDL:create}
+
+
+  threads:
+    virtual:
+      enabled: true

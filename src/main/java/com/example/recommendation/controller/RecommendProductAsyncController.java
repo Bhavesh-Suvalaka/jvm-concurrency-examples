@@ -1,7 +1,7 @@
-package com.example.fibers.controller;
+package com.example.recommendation.controller;
 
-import com.example.fibers.models.Product;
-import com.example.fibers.services.ProductRecommendationService;
+import com.example.recommendation.models.Product;
+import com.example.recommendation.services.ProductRecommendationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

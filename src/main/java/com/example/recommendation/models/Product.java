@@ -1,6 +1,6 @@
-package com.example.fibers.models;
+package com.example.recommendation.models;
 
-import com.example.fibers.dto.ProductDto;
+import com.example.recommendation.dto.ProductDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
