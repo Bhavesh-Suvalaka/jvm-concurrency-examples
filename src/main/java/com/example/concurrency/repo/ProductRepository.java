@@ -1,6 +1,6 @@
-package com.example.recommendation.repo;
+package com.example.concurrency.repo;
 
-import com.example.recommendation.models.Product;
+import com.example.concurrency.models.Product;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
