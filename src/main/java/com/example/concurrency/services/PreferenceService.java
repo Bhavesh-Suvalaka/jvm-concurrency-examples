@@ -4,20 +4,22 @@ import com.example.concurrency.Utils;
 import com.example.concurrency.models.CustomerPreference;
 import lombok.extern.slf4j.Slf4j;
 import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.Dsl;
 import org.asynchttpclient.Response;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class PreferenceService {
-  AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient();
+  private final ScheduledExecutorService scheduler;
 
-  public PreferenceService() {
+  public PreferenceService(AsyncHttpClient asyncHttpClient, ScheduledExecutorService scheduler) {
+    this.scheduler = scheduler;
   }
 
   public List<CustomerPreference> fetchCustomerPreferences(String customerId) {
@@ -27,10 +29,15 @@ public class PreferenceService {
   }
 
   public CompletableFuture<List<CustomerPreference>> fetchCustomerPreferencesAsync(String customerId) {
-    return asyncHttpClient.prepareGet(STR."/customers/\{customerId}/preferences")
-      .execute()
-      .toCompletableFuture()
-      .thenApplyAsync(this::toCustomerPreferences);
+    CompletableFuture<List<CustomerPreference>> delayedResult = new CompletableFuture<>();
+
+    scheduler.schedule(
+      () -> delayedResult.complete(Collections.emptyList()),
+      400,
+      TimeUnit.MILLISECONDS
+    );
+
+    return delayedResult;
   }
 
   private List<CustomerPreference> toCustomerPreferences(Response response) {

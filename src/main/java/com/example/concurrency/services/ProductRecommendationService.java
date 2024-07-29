@@ -4,7 +4,6 @@ import com.example.concurrency.models.Customer;
 import com.example.concurrency.models.CustomerPreference;
 import com.example.concurrency.models.Order;
 import com.example.concurrency.models.Product;
-import com.example.concurrency.repo.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,14 +24,15 @@ public class ProductRecommendationService {
   private final CustomerService customerService;
   private final OrderService orderService;
   private final PreferenceService preferenceService;
-  private final ProductRepository productRepository;
 
-  public ProductRecommendationService(CustomerService customerService, OrderService orderService, PreferenceService preferenceService,
-                                      ProductRepository productRepository) {
+  public ProductRecommendationService(
+    CustomerService customerService,
+    OrderService orderService,
+    PreferenceService preferenceService
+  ) {
     this.customerService = customerService;
     this.orderService = orderService;
     this.preferenceService = preferenceService;
-    this.productRepository = productRepository;
   }
 
   public List<Product> recommendProducts(String customerId) {
@@ -109,6 +109,7 @@ public class ProductRecommendationService {
         toRecommendedProduct(customer.join(), customerPreference.join(), orders.join())
       );
   }
+
 
   private List<Product> toRecommendedProduct(Optional<Customer> customer, List<CustomerPreference> customerPreference, List<Order> orders) {
     return customer

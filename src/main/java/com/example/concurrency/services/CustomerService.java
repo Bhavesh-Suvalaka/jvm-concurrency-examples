@@ -4,22 +4,23 @@ import com.example.concurrency.Utils;
 import com.example.concurrency.external.client.CustomerClient;
 import com.example.concurrency.models.Customer;
 import lombok.extern.slf4j.Slf4j;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.Dsl;
 import org.asynchttpclient.Response;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class CustomerService {
   private final CustomerClient customerClient;
-  private AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient();
+  private final ScheduledExecutorService scheduler;
 
-  public CustomerService(CustomerClient customerClient) {
+  public CustomerService(CustomerClient customerClient, ScheduledExecutorService scheduler) {
     this.customerClient = customerClient;
+    this.scheduler = scheduler;
   }
 
   public Optional<Customer> fetchCustomer(String customerId) {
@@ -29,11 +30,15 @@ public class CustomerService {
   }
 
   public CompletableFuture<Optional<Customer>> fetchCustomerAsync(String customerId) {
-    return asyncHttpClient
-      .prepareGet(STR."/customers/\{customerId}")
-      .execute()
-      .toCompletableFuture()
-      .thenApplyAsync(this::toCustomer);
+    CompletableFuture<Optional<Customer>> delayedResult = new CompletableFuture<>();
+
+    scheduler.schedule(
+      () -> delayedResult.complete(Optional.of(new Customer("1", "Jone doe", "411014"))),
+      500,
+      TimeUnit.MILLISECONDS
+    );
+
+    return delayedResult;
   }
 
   private Optional<Customer> toCustomer(Response response) {

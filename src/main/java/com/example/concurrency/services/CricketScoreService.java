@@ -46,3 +46,6 @@ public class CricketScoreService {
     return new Score(100);
   }
 }
+
+
+// Deadlock induced by thread-pool

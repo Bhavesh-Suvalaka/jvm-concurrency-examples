@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/recommended-products")
@@ -19,7 +20,7 @@ public class RecommendProductSyncController {
   }
 
   @GetMapping("/customer/{customerId}")
-  public List<Product> recommendedProducts(@PathVariable("customerId") String customerId) throws InterruptedException {
-    return productRecommendationService.recommendProducts(customerId);
+  public List<Product> recommendedProducts(@PathVariable("customerId") String customerId) throws InterruptedException, ExecutionException {
+    return productRecommendationService.recommendProductsThreads(customerId);
   }
 }
