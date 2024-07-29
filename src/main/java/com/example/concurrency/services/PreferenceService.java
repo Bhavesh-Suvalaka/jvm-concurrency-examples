@@ -3,7 +3,6 @@ package com.example.concurrency.services;
 import com.example.concurrency.Utils;
 import com.example.concurrency.models.CustomerPreference;
 import lombok.extern.slf4j.Slf4j;
-import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.Response;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class PreferenceService {
   private final ScheduledExecutorService scheduler;
 
-  public PreferenceService(AsyncHttpClient asyncHttpClient, ScheduledExecutorService scheduler) {
+  public PreferenceService(ScheduledExecutorService scheduler) {
     this.scheduler = scheduler;
   }
 

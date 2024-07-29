@@ -8,8 +8,11 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.StructuredTaskScope;
+import java.util.concurrent.StructuredTaskScope.Subtask;
 import java.util.stream.Stream;
 
+@SuppressWarnings("ALL")
 @Slf4j
 public class CassandraService {
   private final CassandraRepository cassandraRepository;
@@ -22,7 +25,7 @@ public class CassandraService {
 
   public CompletableFuture<Long> getEventsCount(List<String> customerIds) {
     var counts = customerIds
-      .parallelStream()
+      .stream()
       .map(it ->
         CompletableFuture.supplyAsync(() -> getEventCountForEvent(it, eventTypes), executor)
       ).toList();
@@ -36,6 +39,23 @@ public class CassandraService {
         counts.stream().flatMap(CompletableFuture::join)
           .reduce(0L, Long::sum)
       );
+  }
+
+  public Long getEventsCount2(List<String> customerIds) {
+    try (var scope = new StructuredTaskScope<Stream<Long>>()) {
+      var subsTasks = customerIds
+        .stream()
+        .map(it -> scope.fork(() -> getEventCountForEvent(it, eventTypes)));
+
+      scope.join();
+
+      return subsTasks
+        .flatMap(Subtask::get)
+        .reduce(0L, Long::sum);
+
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Stream<Long> getEventCountForEvent(String customerId, Set<String> eventTypes) {
