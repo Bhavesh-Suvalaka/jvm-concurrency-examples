@@ -2,6 +2,9 @@ server:
   port: 9090
 
 spring:
+  threads:
+    virtual:
+      enabled: true
   thread-executor: virtual
   datasource:
     hikari:
@@ -16,7 +19,18 @@ spring:
     hibernate:
       ddl-auto: ${POSTGRES_AUTO_DDL:create}
 
-
-  threads:
-    virtual:
+management:
+  server:
+    # different port for actuator endpoint. This might not be exposed outside of k8s cluster
+    port: 9091
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    metrics:
       enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always

@@ -21,6 +21,6 @@ public class RecommendProductSyncController {
 
   @GetMapping("/customer/{customerId}")
   public List<Product> recommendedProducts(@PathVariable("customerId") String customerId) throws InterruptedException, ExecutionException {
-    return productRecommendationService.recommendProductsThreads(customerId);
+    return productRecommendationService.recommendProducts(customerId);
   }
 }
