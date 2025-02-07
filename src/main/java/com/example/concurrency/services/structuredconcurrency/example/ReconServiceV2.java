@@ -1,7 +1,7 @@
-package com.example.concurrency.models;
+package com.example.concurrency.services.structuredconcurrency.example;
 
 import com.example.concurrency.repo.TransactionRepository;
-import com.example.concurrency.services.PaymentTransactions;
+import com.example.concurrency.models.PaymentTransactions;
 import com.example.config.CustomTaskScope;
 import lombok.extern.slf4j.Slf4j;
 

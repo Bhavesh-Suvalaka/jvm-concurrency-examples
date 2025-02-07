@@ -1,4 +1,4 @@
-package com.example.concurrency.services;
+package com.example.concurrency.services.structuredconcurrency.example;
 
 import com.example.concurrency.Utils;
 import com.example.concurrency.models.Score;
@@ -46,6 +46,3 @@ public class CricketScoreService {
     return new Score(100);
   }
 }
-
-
-// Deadlock induced by thread-pool

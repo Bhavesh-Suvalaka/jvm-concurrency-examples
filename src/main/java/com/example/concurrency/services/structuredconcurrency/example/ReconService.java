@@ -1,7 +1,7 @@
-package com.example.concurrency.models;
+package com.example.concurrency.services.structuredconcurrency.example;
 
 import com.example.concurrency.repo.TransactionRepository;
-import com.example.concurrency.services.PaymentTransactions;
+import com.example.concurrency.models.PaymentTransactions;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class ReconService {
   private TransactionRepository repository;
 
-  public void reconcileTransactions() throws InterruptedException {
+  public void reconcileTransactions() {
     var reconInProgress = CompletableFuture.supplyAsync(
       this::reconcileInProgressTransactions
     );

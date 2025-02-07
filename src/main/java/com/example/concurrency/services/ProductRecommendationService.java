@@ -102,7 +102,6 @@ public class ProductRecommendationService {
     }
   }
 
-
   public List<Product> recommendProductsThreadsCancel(String customerId) {
     Future<List<Order>> ordersFuture = null;
     Future<Optional<Customer>> customerFuture = null;
@@ -154,7 +153,6 @@ public class ProductRecommendationService {
       );
   }
 
-
   private List<Product> toRecommendedProduct(Optional<Customer> customer, List<CustomerPreference> customerPreference, List<Order> orders) {
     return customer
       .map(it -> prepareProductRecommendation(it, customerPreference, orders))
@@ -176,7 +174,6 @@ public class ProductRecommendationService {
       var customer = scope.fork(() -> customerService.fetchCustomer(customerId));
       var customerPref = scope.fork(() -> preferenceService.fetchCustomerPreferences(customerId));
 
-      scope.join().throwIfFailed(RuntimeException::new);
       return customer.get()
         .map(it -> prepareProductRecommendation(it, customerPref.get(), orderHistory.get()))
         .orElse(Collections.emptyList());

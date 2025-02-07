@@ -3,7 +3,6 @@ package com.example.concurrency.services;
 import com.example.concurrency.Utils;
 import com.example.concurrency.models.Order;
 import lombok.extern.slf4j.Slf4j;
-import org.asynchttpclient.Response;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -26,7 +25,7 @@ public class OrderService {
 
   public List<Order> fetchOrderHistory(String customerId) {
     Utils.sleep(1000);
-    log.error("%s".formatted(Thread.currentThread()));
+    log.info("%s".formatted(Thread.currentThread()));
     return IntStream.range(1, 10).mapToObj(it ->
       new Order(UUID.randomUUID(), Collections.emptyList())
     ).toList();
@@ -45,9 +44,5 @@ public class OrderService {
     );
 
     return delayedResult;
-  }
-
-  private List<Order> toOrders(Response response) {
-    return List.of();
   }
 }

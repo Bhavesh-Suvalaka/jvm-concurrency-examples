@@ -1,4 +1,4 @@
-package com.example.concurrency.services;
+package com.example.concurrency.services.structuredconcurrency.example;
 
 import com.example.concurrency.client.HttpClient;
 import com.example.concurrency.models.VehicleData;

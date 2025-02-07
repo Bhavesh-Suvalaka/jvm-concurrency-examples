@@ -4,7 +4,6 @@ import com.example.concurrency.Utils;
 import com.example.concurrency.external.client.CustomerClient;
 import com.example.concurrency.models.Customer;
 import lombok.extern.slf4j.Slf4j;
-import org.asynchttpclient.Response;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -39,9 +38,5 @@ public class CustomerService {
     );
 
     return delayedResult;
-  }
-
-  private Optional<Customer> toCustomer(Response response) {
-    return Optional.of(new Customer("1", "Harry Potter", "411014"));
   }
 }
