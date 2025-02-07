@@ -15,8 +15,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.StructuredTaskScope;
+import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("preview")
 @Service
@@ -45,8 +47,35 @@ public class ProductRecommendationService {
       .orElse(Collections.emptyList());
   }
 
-  public List<Product> recommendProductsThreads(String customerId) throws ExecutionException, InterruptedException {
-    try (ExecutorService service = Executors.newVirtualThreadPerTaskExecutor()) {
+  public List<Product> recommendProductsT1(String customerId) throws InterruptedException {
+    AtomicReference<List<Order>> ordersRef = new AtomicReference<>();
+    Thread thread1 = new Thread(() -> {
+      List<Order> orders = orderService.fetchOrderHistory(customerId);
+      ordersRef.set(orders);
+    });
+    AtomicReference<Optional<Customer>> custRef = new AtomicReference<>();
+    Thread thread2 = new Thread(() -> {
+      Optional<Customer> customer = customerService.fetchCustomer(customerId);
+      custRef.set(customer);
+    });
+    AtomicReference<List<CustomerPreference>> custPrefRef = new AtomicReference<>();
+    Thread thread3 = new Thread(() -> {
+      List<CustomerPreference> customerPreference = preferenceService.fetchCustomerPreferences(customerId);
+      custPrefRef.set(customerPreference);
+    });
+    thread1.start();
+    thread2.start();
+    thread3.start();
+    thread1.join();
+    thread2.join();
+    thread3.join();
+    return custRef.get()
+      .map(it -> prepareProductRecommendation(it, custPrefRef.get(), ordersRef.get()))
+      .orElse(Collections.emptyList());
+  }
+
+  public List<Product> recommendProductsThreadPool(String customerId) throws ExecutionException, InterruptedException {
+    try (ExecutorService service = Executors.newFixedThreadPool(10)) {
       var ordersFuture = service.submit(() -> orderService.fetchOrderHistory(customerId));
       var customerFuture = service.submit(() -> customerService.fetchCustomer(customerId));
       var custPrefFuture = service.submit(() -> preferenceService.fetchCustomerPreferences(customerId));
@@ -58,6 +87,21 @@ public class ProductRecommendationService {
         .orElse(Collections.emptyList());
     }
   }
+
+  public List<Product> recommendProductsForkJoinPool(String customerId) throws ExecutionException, InterruptedException {
+    try (ExecutorService service = ForkJoinPool.commonPool()) {
+      var ordersFuture = service.submit(() -> orderService.fetchOrderHistory(customerId));
+      var customerFuture = service.submit(() -> customerService.fetchCustomer(customerId));
+      var custPrefFuture = service.submit(() -> preferenceService.fetchCustomerPreferences(customerId));
+
+      List<CustomerPreference> preferences = custPrefFuture.get();
+      List<Order> orders = ordersFuture.get();
+      return customerFuture.get()
+        .map(it -> prepareProductRecommendation(it, preferences, orders))
+        .orElse(Collections.emptyList());
+    }
+  }
+
 
   public List<Product> recommendProductsThreadsCancel(String customerId) {
     Future<List<Order>> ordersFuture = null;
